@@ -1,17 +1,25 @@
-use super::*;
 use curv::arithmetic::Converter;
 use curv::BigInt;
 
-use crate::HPS::{party_one,party_two};
+mod HPS;
+use crate::HPS::{party_one, party_two};
+
+#[derive(Copy,PartialEq,Clone,Debug)]
+pub enum Error {
+    InvalidKey,
+    InvalidSS,
+    InvaildCom,
+    InvalidSig,
+}
 
 fn full_siginature() {
     ////////// Simulate KeyGen /////////////////
     // assume party1 and party2 engaged with KeyGen in the past resulting in
     // party1 owning private share and HSMCL key-pair
     // party2 owning private share and HSMCL setup(cl group and PK)
-    let (_party_one_private_share_gen, comm_witness, ec_key_pair_party1) =
+    let (party_one_first_message, comm_witness, ec_key_pair_party1) =
         party_one::KeyGenFirstMsg::create_commitments();
-    let (party_two_private_share_gen, ec_key_pair_party2) = party_two::KeyGenFirstMsg::create();
+    let (party_two_first_message, ec_key_pair_party2) = party_two::KeyGenFirstMsg::create();
 
     let party_one_second_message = party_one::KeyGenSecondMsg::verify_and_decommit(
         comm_witness,
@@ -78,8 +86,9 @@ fn full_siginature() {
     );
 
     let pubkey =
-        party_one::compute_pubkey(&party1_private, &party_two_private_share_gen.public_share);
-    party_one::verify(&signature, &pubkey, &message).expect("Invalid signature")
+        party_one::compute_pubkey(&party1_private, &party_two_first_message.public_share);
+    party_one::verify(&signature, &pubkey, &message).expect("Invalid signature");
+    println!("signature is {:#?}",&signature);
 }
 
 fn main() {
