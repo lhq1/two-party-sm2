@@ -104,7 +104,7 @@ fn test_two_party_sign() {
     );
 
     let signature = party_one::Signature::compute(
-        &hsmcl,
+        &hsmcl_setup,
         &party1_private,
         partial_sig.c3,
         &eph_ec_key_pair_party1,

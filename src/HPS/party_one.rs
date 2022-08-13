@@ -11,7 +11,6 @@ use curv::cryptographic_primitives::proofs::sigma_ec_ddh::*;
 use curv::cryptographic_primitives::proofs::ProofError;
 use curv::elliptic::curves::{secp256_k1::Secp256k1, Point, Scalar};
 use curv::BigInt;
-use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use subtle::ConstantTimeEq;
 
@@ -22,13 +21,13 @@ use crate::Error::{self, InvalidSig};
 
 
 //****************** Begin: Party One structs ******************//
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct EcKeyPair {
     pub public_share: Point<Secp256k1>,
     secret_share: Scalar<Secp256k1>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct CommWitness {
     pub pk_commitment_blind_factor: BigInt,
     pub zk_pok_blind_factor: BigInt,
@@ -36,87 +35,71 @@ pub struct CommWitness {
     pub d_log_proof: DLogProof<Secp256k1, Sha256>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct KeyGenFirstMsg {
     pub pk_commitment: BigInt,
     pub zk_pok_commitment: BigInt,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct KeyGenSecondMsg {
     pub comm_witness: CommWitness,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct HSMCL {
     pub public: PK,
     pub secret: SK,
     pub cl_group: CLGroup,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct  HSMCLSetup{
     pub public: PK,
     pub cl_group: CLGroup,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct HSMCLPublic {
     pub proof: CLDLProof,
     pub encrypted_share: CLCiphertext,
     pub public_share: Point<Secp256k1>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct SignatureRecid {
     pub d: BigInt,
     pub z: BigInt,
     pub recid: u8,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Signature {
     pub d: BigInt,
     pub z: BigInt,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Clone)]
 pub struct Party1Private {
     s1: Scalar<Secp256k1>,
     hsmcl_pub: PK,
     hsmcl_priv: SK,
 }
 
-/* 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLFirstMessage {
-    pub c_hat: BigInt,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLdecommit {
-    pub q_hat: Point<Secp256k1>,
-    pub blindness: BigInt,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLSecondMessage {
-    pub decommit: PDLdecommit,
-}
-*/
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct EphEcKeyPair {
     pub public_share: Point<Secp256k1>,
     secret_share: Scalar<Secp256k1>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct EphKeyGenFirstMsg {
     pub d_log_proof: ECDDHProof<Secp256k1, Sha256>,
     pub public_share: Point<Secp256k1>,
     pub c: Point<Secp256k1>, //c = secret_share * base_point2
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct EphKeyGenSecondMsg {}
 
 //****************** End: Party One structs ******************//
@@ -351,7 +334,7 @@ impl EphKeyGenSecondMsg {
 
 impl Signature {
     pub fn compute(
-        hsmcl: &HSMCL,
+        hsmcl: &HSMCLSetup,
         party_one_private: &Party1Private,
         partial_sig_c3: CLCiphertext,
         ephemeral_local_share: &EphEcKeyPair,

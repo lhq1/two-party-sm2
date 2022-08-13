@@ -27,72 +27,48 @@ use super::SECURITY_BITS;
 
 //****************** Begin: Party Two structs ******************//
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct EcKeyPair {
     pub public_share: Point<Secp256k1>,
     secret_share: Scalar<Secp256k1>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct KeyGenFirstMsg {
     pub d_log_proof: DLogProof<Secp256k1, Sha256>,
     pub public_share: Point<Secp256k1>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct KeyGenSecondMsg {}
 
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct PartialSig {
     pub c3: CLCiphertext,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug,Clone)]
 pub struct Party2Private {
     s2: Scalar<Secp256k1>,
 }
 
-#[derive(Serialize, Deserialize)]
+
+#[derive(Debug,Clone)]
 pub struct  Party2Setup{
     pub group: CLGroup,
     pub ek: HSMCLPK,
 }
-/* 
-#[derive(Debug)]
-pub struct PDLchallenge {
-    pub c_tag: BigInt,
-    pub c_tag_tag: BigInt,
-    a: BigInt,
-    b: BigInt,
-    blindness: BigInt,
-    q_tag: Point<Secp256k1>,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLFirstMessage {
-    pub c_tag: BigInt,
-    pub c_tag_tag: BigInt,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLdecommit {
-    pub a: BigInt,
-    pub b: BigInt,
-    pub blindness: BigInt,
-}
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PDLSecondMessage {
-    pub decommit: PDLdecommit,
-}
-*/
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+
+#[derive(Clone, Debug)]
 pub struct EphEcKeyPair {
     pub public_share: Point<Secp256k1>,
     secret_share: Scalar<Secp256k1>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct EphCommWitness {
     pub pk_commitment_blind_factor: BigInt,
     pub zk_pok_blind_factor: BigInt,
@@ -101,17 +77,17 @@ pub struct EphCommWitness {
     pub c: Point<Secp256k1>, //c = secret_share * base_point2
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct EphKeyGenFirstMsg {
     pub pk_commitment: BigInt,
     pub zk_pok_commitment: BigInt,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct EphKeyGenSecondMsg {
     pub comm_witness: EphCommWitness,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Party2Public {
     pub group: CLGroup,
     pub ek: HSMCLPK,
