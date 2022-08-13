@@ -93,7 +93,7 @@ fn test_two_party_sign() {
     let party2_public=
     party_two::Party2Public::verify_zkdlcl_proof(&party2_hsmcl_setup, &_party_one_hsmcl_public)
     .expect("failed to verify ZK-CLDL");
-    let message = BigInt::from(1234);
+    let message = "Hello world";
     
     let pubkey =
         party_one::compute_pubkey(&party1_private, &party_two_private_share_gen.public_share);

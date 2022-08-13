@@ -340,7 +340,7 @@ impl Signature {
         ephemeral_local_share: &EphEcKeyPair,
         ephemeral_other_public_share: &Point<Secp256k1>,
         pubkey:&Point<Secp256k1>,
-        message: &BigInt,
+        message: &str,
     ) -> Signature {
         //compute r = k2* R1
         let r = ephemeral_other_public_share * &ephemeral_local_share.secret_share;
@@ -352,7 +352,7 @@ impl Signature {
         
         let e=Sha256::new()
             .chain_point(&pubkey)
-            .chain_bigint(&message)
+            .chain_bigint(&BigInt::from_bytes(&message.as_bytes()))
             .result_bigint()
             .mod_floor(Scalar::<Secp256k1>::group_order());
         
@@ -383,7 +383,7 @@ impl Signature {
 pub fn verify(
     signature: &Signature,
     pubkey: &Point<Secp256k1>,
-    message: &BigInt,
+    message: &str,
 ) -> Result<(), Error> {
     let z_fe = Scalar::<Secp256k1>::from(&signature.z);
     let dz = BigInt::mod_add(
@@ -401,7 +401,7 @@ pub fn verify(
                     mod_floor(Scalar::<Secp256k1>::group_order());
     let e=Sha256::new()
             .chain_point(&pubkey)
-            .chain_bigint(&message)
+            .chain_bigint(&BigInt::from_bytes(&message.as_bytes()))
             .result_bigint()
             .mod_floor(Scalar::<Secp256k1>::group_order());
     let rx_plus_e_byte = &BigInt::to_bytes(&(rx+e));

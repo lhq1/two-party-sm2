@@ -72,7 +72,7 @@ fn two_party_key_generation(seed:BigInt)->(PartyOneSignInput,PartyTwoSignInput){
 fn two_party_signature(
     p1_input:&PartyOneSignInput,
     p2_input:&PartyTwoSignInput,
-    message:&BigInt
+    message:&str
 )->Signature{
     let (eph_party_two_first_message, eph_comm_witness, eph_ec_key_pair_party2) =
         party_two::EphKeyGenFirstMsg::create_commitments();
@@ -136,9 +136,10 @@ fn main() {
     println!("key generation starts!");
     let (p1_input,p2_input)=two_party_key_generation(seed);
     println!("key generation ends!");
-    let message = BigInt::from(1234);
+    let message = "Hello world";
     println!("signature startS!");
     let signture = two_party_signature(&p1_input, &p2_input, &message);
     println!("signature ends!");
-    println!("Final signature is {:#?}",&signture);
+    println!("Final signature of {} is {:#?}",&message, &signture);
+    
 }

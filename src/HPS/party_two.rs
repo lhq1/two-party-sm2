@@ -319,7 +319,7 @@ impl PartialSig {
         ephemeral_local_share: &EphEcKeyPair,
         ephemeral_other_public_share: &Point<Secp256k1>,
         pubkey:&Point<Secp256k1>,
-        message: &BigInt,
+        message: &str,
     ) -> PartialSig {
         let q = Scalar::<Secp256k1>::group_order();
         //compute r = k2* R1
@@ -329,7 +329,7 @@ impl PartialSig {
         let rx = r.x_coord().unwrap().mod_floor(q);
         let e=Sha256::new()
             .chain_point(&pubkey)
-            .chain_bigint(&message)
+            .chain_bigint(&BigInt::from_bytes(&message.as_bytes()))
             .result_bigint()
             .mod_floor(Scalar::<Secp256k1>::group_order());
         let d = rx + e;
