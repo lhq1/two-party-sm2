@@ -181,10 +181,10 @@ impl KeyGenSecondMsg {
 }
 
 pub fn compute_pubkey(
-    local_share: &EcKeyPair,
+    party_two_private: &Party2Private,
     other_share_public_share: &Point<Secp256k1>,
 ) -> Point<Secp256k1> {
-    other_share_public_share * &local_share.secret_share-Point::generator()
+    other_share_public_share * &party_two_private.s2-Point::generator()
 }
 
 impl Party2Private {

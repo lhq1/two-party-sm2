@@ -1,5 +1,6 @@
 use HPS::party_one::Signature;
-use curv::arithmetic::Converter;
+use curv::elliptic::curves::Secp256k1;
+use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
 
 mod HPS;
@@ -12,17 +13,17 @@ pub enum Error {
     InvaildCom,
     InvalidSig,
 }
-
 struct PartyOneSignInput{
     setup:party_one::HSMCLSetup,
-    ec_pair:party_one::EcKeyPair,
+    pub_key: Point<Secp256k1>,
     private:party_one::Party1Private,
 }
 
 
+
 struct PartyTwoSignInput{
     setup:party_two::Party2Setup,
-    ec_pair:party_two::EcKeyPair,
+    pub_key:Point<Secp256k1>,
     private:party_two::Party2Private,
 }
 
@@ -57,12 +58,12 @@ fn two_party_key_generation(seed:BigInt)->(PartyOneSignInput,PartyTwoSignInput){
     (
         PartyOneSignInput{
             setup:party1_hsmcl_setup,
-            ec_pair:ec_key_pair_party1,
+            pub_key:party_one::compute_pubkey(&party1_private, &ec_key_pair_party2.public_share),
             private:party1_private,
         },
         PartyTwoSignInput{
             setup:party2_hsmcl_setup,
-            ec_pair:ec_key_pair_party2,
+            pub_key:party_two::compute_pubkey(&party2_private, &ec_key_pair_party1.public_share),
             private: party2_private,
         }
     )
@@ -102,31 +103,27 @@ fn two_party_signature(
     party_two::Party2Public::verify_zkdlcl_proof(&p2_input.setup, &party_one_hsmcl_public)
     .expect("failed to verify ZK-CLDL");
     
-    let p2_pubkey = party_two::compute_pubkey(&p2_input.ec_pair, &p1_input.ec_pair.public_share);
     let partial_sig = party_two::PartialSig::compute(
         party2_public,
         &p2_input.private,
         &eph_ec_key_pair_party2,
         &eph_party_one_first_message.public_share,
-        &p2_pubkey,
+        &p2_input.pub_key,
         &message,
     );
     println!("P2 computes c3 according to c1");
     
-    let p1_pubkey =
-        party_one::compute_pubkey(&p1_input.private, &p2_input.ec_pair.public_share);
-
     let signature = party_one::Signature::compute(
         &p1_input.setup,
         &p1_input.private,
         partial_sig.c3,
         &eph_ec_key_pair_party1,
         &eph_party_two_second_message.comm_witness.public_share,
-        &p1_pubkey,
+        &p1_input.pub_key,
         &message,
     );
     println!("P1 computes final signature");
-    party_one::verify(&signature, &p1_pubkey, &message).expect("Invalid signature");
+    party_one::verify(&signature, &p1_input.pub_key, &message).expect("Invalid signature");
     signature
 }
 
