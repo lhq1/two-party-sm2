@@ -1,7 +1,7 @@
 use curv::elliptic::curves::Secp256k1;
 use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
-use std::io::stdin;
+//use std::io::stdin;
 
 mod HPS;
 use HPS::{party_one, party_two};
