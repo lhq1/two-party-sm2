@@ -1,11 +1,11 @@
-use hps::party_one::Signature;
 use curv::elliptic::curves::Secp256k1;
 use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
+use std::io::stdin;
 
-mod hps;
-use crate::hps::{party_one, party_two};
-
+mod HPS;
+use HPS::{party_one, party_two};
+use HPS::party_one::Signature;
 #[derive(Copy,PartialEq,Clone,Debug)]
 pub enum Error {
     InvalidKey,
@@ -136,8 +136,14 @@ fn main() {
     println!("key generation starts!");
     let (p1_input,p2_input)=two_party_key_generation(seed);
     println!("key generation ends!");
-    let message = "Hello world";
-    println!("signature startS!");
+    /* 
+    //You can choose to input message in terminal
+    let mut message:String = String::new();
+    println!("Please input the message you want to sign:");
+    stdin().read_line(&mut message).expect("Failed to load message");
+    */
+    let message="Hello world";
+    println!("signature starts!");
     let signture = two_party_signature(&p1_input, &p2_input, &message);
     println!("signature ends!");
     println!("Final signature of {} is {:#?}",&message, &signture);
