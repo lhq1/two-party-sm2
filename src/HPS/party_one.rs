@@ -339,6 +339,7 @@ impl Signature {
         partial_sig_c3: CLCiphertext,
         ephemeral_local_share: &EphEcKeyPair,
         ephemeral_other_public_share: &Point<Secp256k1>,
+        pubkey:&Point<Secp256k1>,
         message: &BigInt,
     ) -> Signature {
         //compute r = k2* R1
@@ -348,8 +349,14 @@ impl Signature {
             .x_coord()
             .unwrap()
             .mod_floor(Scalar::<Secp256k1>::group_order());
-        let e=message;
-        let d= e + rx;
+        
+        let e=Sha256::new()
+            .chain_point(&pubkey)
+            .chain_bigint(&message)
+            .result_bigint()
+            .mod_floor(Scalar::<Secp256k1>::group_order());
+        
+        let d= rx+e;
         let s1=&party_one_private.s1.to_bigint();
         let s1_inv = BigInt::mod_inv(s1, Scalar::<Secp256k1>::group_order()).unwrap();
 
@@ -388,10 +395,18 @@ pub fn verify(
     let dz_fe = Scalar::<Secp256k1>::from(&dz);
     let u1 = Point::generator() * z_fe;
     let u2 = pubkey * dz_fe;
-    let R=u1+u2;
-    let rx=&R.x_coord().unwrap();
-    let rx_plus_e_byte = &BigInt::to_bytes(&(rx+message));
+    let r=u1+u2;
+    let rx=&r.x_coord().
+                    unwrap().
+                    mod_floor(Scalar::<Secp256k1>::group_order());
+    let e=Sha256::new()
+            .chain_point(&pubkey)
+            .chain_bigint(&message)
+            .result_bigint()
+            .mod_floor(Scalar::<Secp256k1>::group_order());
+    let rx_plus_e_byte = &BigInt::to_bytes(&(rx+e));
     let d_byte = &BigInt::to_bytes(&signature.d);
+    
     if d_byte.ct_eq(rx_plus_e_byte).unwrap_u8() == 1
     {
         Ok(())

@@ -94,14 +94,19 @@ fn test_two_party_sign() {
     party_two::Party2Public::verify_zkdlcl_proof(&party2_hsmcl_setup, &_party_one_hsmcl_public)
     .expect("failed to verify ZK-CLDL");
     let message = BigInt::from(1234);
-
+    
+    let pubkey =
+        party_one::compute_pubkey(&party1_private, &party_two_private_share_gen.public_share);
+    
     let partial_sig = party_two::PartialSig::compute(
         party2_public,
         &party2_private,
         &eph_ec_key_pair_party2,
         &eph_party_one_first_message.public_share,
+        &pubkey,
         &message,
     );
+    
 
     let signature = party_one::Signature::compute(
         &hsmcl_setup,
@@ -109,10 +114,9 @@ fn test_two_party_sign() {
         partial_sig.c3,
         &eph_ec_key_pair_party1,
         &eph_party_two_second_message.comm_witness.public_share,
+        &pubkey,
         &message,
     );
 
-    let pubkey =
-        party_one::compute_pubkey(&party1_private, &party_two_private_share_gen.public_share);
     party_one::verify(&signature, &pubkey, &message).expect("Invalid signature")
 }

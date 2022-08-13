@@ -101,15 +101,20 @@ fn two_party_signature(
     let party2_public=
     party_two::Party2Public::verify_zkdlcl_proof(&p2_input.setup, &party_one_hsmcl_public)
     .expect("failed to verify ZK-CLDL");
-
+    
+    let p2_pubkey = party_two::compute_pubkey(&p2_input.ec_pair, &p1_input.ec_pair.public_share);
     let partial_sig = party_two::PartialSig::compute(
         party2_public,
         &p2_input.private,
         &eph_ec_key_pair_party2,
         &eph_party_one_first_message.public_share,
+        &p2_pubkey,
         &message,
     );
     println!("P2 computes c3 according to c1");
+    
+    let p1_pubkey =
+        party_one::compute_pubkey(&p1_input.private, &p2_input.ec_pair.public_share);
 
     let signature = party_one::Signature::compute(
         &p1_input.setup,
@@ -117,12 +122,11 @@ fn two_party_signature(
         partial_sig.c3,
         &eph_ec_key_pair_party1,
         &eph_party_two_second_message.comm_witness.public_share,
+        &p1_pubkey,
         &message,
     );
     println!("P1 computes final signature");
-    let pubkey =
-        party_one::compute_pubkey(&p1_input.private, &p2_input.ec_pair.public_share);
-    party_one::verify(&signature, &pubkey, &message).expect("Invalid signature");
+    party_one::verify(&signature, &p1_pubkey, &message).expect("Invalid signature");
     signature
 }
 

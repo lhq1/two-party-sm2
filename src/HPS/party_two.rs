@@ -16,7 +16,6 @@ use curv::cryptographic_primitives::proofs::sigma_ec_ddh::*;
 use curv::cryptographic_primitives::proofs::ProofError;
 use curv::elliptic::curves::{secp256_k1::Secp256k1, Point, Scalar};
 use curv::BigInt;
-use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 
 use super::party_one::EphKeyGenFirstMsg as Party1EphKeyGenFirstMsg;
@@ -319,6 +318,7 @@ impl PartialSig {
         local_share: &Party2Private,
         ephemeral_local_share: &EphEcKeyPair,
         ephemeral_other_public_share: &Point<Secp256k1>,
+        pubkey:&Point<Secp256k1>,
         message: &BigInt,
     ) -> PartialSig {
         let q = Scalar::<Secp256k1>::group_order();
@@ -327,7 +327,11 @@ impl PartialSig {
             ephemeral_other_public_share * &ephemeral_local_share.secret_share;
 
         let rx = r.x_coord().unwrap().mod_floor(q);
-        let e = message;
+        let e=Sha256::new()
+            .chain_point(&pubkey)
+            .chain_bigint(&message)
+            .result_bigint()
+            .mod_floor(Scalar::<Secp256k1>::group_order());
         let d = rx + e;
         let k2 = &ephemeral_local_share.secret_share.to_bigint();
         let c1=eval_scal(&party_two_public.encrypted_secret_share, &k2);

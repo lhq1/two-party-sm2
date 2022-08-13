@@ -1218,7 +1218,6 @@ version = "0.1.0"
 dependencies = [
  "class_group",
  "curv-kzen",
- "serde",
  "sha2 0.9.9",
  "subtle",
 ]
