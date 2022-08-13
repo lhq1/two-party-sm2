@@ -113,24 +113,6 @@ impl KeyGenFirstMsg {
         )
     }
 
-    pub fn create_with_fixed_secret_share(
-        secret_share: Scalar<Secp256k1>,
-    ) -> (KeyGenFirstMsg, EcKeyPair) {
-        let base = Point::generator();
-        let public_share = base * &secret_share;
-        let d_log_proof = DLogProof::prove(&secret_share);
-        let ec_key_pair = EcKeyPair {
-            public_share: public_share.clone(),
-            secret_share,
-        };
-        (
-            KeyGenFirstMsg {
-                d_log_proof,
-                public_share,
-            },
-            ec_key_pair,
-        )
-    }
 }
 
 impl KeyGenSecondMsg {

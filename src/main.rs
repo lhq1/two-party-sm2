@@ -1,10 +1,10 @@
-use HPS::party_one::Signature;
+use hps::party_one::Signature;
 use curv::elliptic::curves::Secp256k1;
 use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
 
-mod HPS;
-use crate::HPS::{party_one, party_two};
+mod hps;
+use crate::hps::{party_one, party_two};
 
 #[derive(Copy,PartialEq,Clone,Debug)]
 pub enum Error {

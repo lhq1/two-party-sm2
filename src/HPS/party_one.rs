@@ -82,7 +82,6 @@ pub struct Signature {
 #[derive(Clone)]
 pub struct Party1Private {
     s1: Scalar<Secp256k1>,
-    hsmcl_pub: PK,
     hsmcl_priv: SK,
 }
 
@@ -149,46 +148,6 @@ impl KeyGenFirstMsg {
         )
     }
 
-    pub fn create_commitments_with_fixed_secret_share(
-        secret_share: Scalar<Secp256k1>,
-    ) -> (KeyGenFirstMsg, CommWitness, EcKeyPair) {
-        let base = Point::generator();
-        let public_share = base * &secret_share;
-
-        let d_log_proof = DLogProof::prove(&secret_share);
-
-        let pk_commitment_blind_factor = BigInt::sample(SECURITY_BITS);
-        let pk_commitment =
-            HashCommitment::<Sha256>::create_commitment_with_user_defined_randomness(
-                &BigInt::from_bytes(public_share.to_bytes(true).as_ref()),
-                &pk_commitment_blind_factor,
-            );
-
-        let zk_pok_blind_factor = BigInt::sample(SECURITY_BITS);
-        let zk_pok_commitment =
-            HashCommitment::<Sha256>::create_commitment_with_user_defined_randomness(
-                &BigInt::from_bytes(d_log_proof.pk_t_rand_commitment.to_bytes(true).as_ref()),
-                &zk_pok_blind_factor,
-            );
-
-        let ec_key_pair = EcKeyPair {
-            public_share,
-            secret_share,
-        };
-        (
-            KeyGenFirstMsg {
-                pk_commitment,
-                zk_pok_commitment,
-            },
-            CommWitness {
-                pk_commitment_blind_factor,
-                zk_pok_blind_factor,
-                public_share: ec_key_pair.public_share.clone(),
-                d_log_proof,
-            },
-            ec_key_pair,
-        )
-    }
 }
 
 impl KeyGenSecondMsg {
@@ -212,7 +171,6 @@ impl Party1Private {
     pub fn set_private_key(ec_key: &EcKeyPair, hsmcl: &HSMCL) -> Party1Private {
         Party1Private {
             s1: ec_key.secret_share.clone(),
-            hsmcl_pub: hsmcl.public.clone(),
             hsmcl_priv: hsmcl.secret.clone(),
         }
     }
