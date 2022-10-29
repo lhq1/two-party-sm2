@@ -1,6 +1,7 @@
 use curv::elliptic::curves::Secp256k1;
 use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
+use stopwatch::Stopwatch;
 //use std::io::stdin;
 
 mod HPS;
@@ -134,8 +135,10 @@ fn main() {
         10,
     ).unwrap();
     println!("key generation starts!");
+    let sw=Stopwatch::start_new();
     let (p1_input,p2_input)=two_party_key_generation(seed);
     println!("key generation ends!");
+    println!("The overall time of keygen is {:.8}", sw);
     /* 
     //You can choose to input message in terminal
     let mut message:String = String::new();
@@ -144,8 +147,10 @@ fn main() {
     */
     let message="Hello world";
     println!("signature starts!");
+    let sw = Stopwatch::start_new();
     let signture = two_party_signature(&p1_input, &p2_input, &message);
     println!("signature ends!");
+    println!("The overall time of sign is {:.8}", sw);
     println!("Final signature of {} is {:#?}",&message, &signture);
     
 }
