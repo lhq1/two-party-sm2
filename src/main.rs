@@ -135,7 +135,7 @@ fn compute_com(){
     println!("The size of party two first message is {}", mem::size_of::<party_two::KeyGenFirstMsg>());
     println!("The size of party one second message is {}", mem::size_of::<party_one::KeyGenSecondMsg>());
     println!("The size of party two second message is {}", mem::size_of::<party_two::KeyGenSecondMsg>());
-    println!("The size of party one HSCM setup is {}", mem::size_of::<party_one::Party2Setup>());
+    println!("The size of party one HSCM setup is {}", mem::size_of::<party_one::HSMCLSetup>());
     println!("List the comminication during the signature phrase");
     println!("The size of party two first message is {}", mem::size_of::<party_two::EphKeyGenFirstMsg>());
     println!("The size of party one first message is {}", mem::size_of::<party_one::EphKeyGenFirstMsg>());
