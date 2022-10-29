@@ -33,7 +33,6 @@ fn two_party_key_generation(seed:BigInt)->(PartyOneSignInput,PartyTwoSignInput){
     let (party_one_first_message, comm_witness, ec_key_pair_party1) =
         party_one::KeyGenFirstMsg::create_commitments();
     println!("P1 sends first message: commit DL");
-
     let (party_two_first_message, ec_key_pair_party2) = party_two::KeyGenFirstMsg::create();
     println!("P2 sends first message: proof DL");
 
@@ -130,6 +129,22 @@ fn two_party_signature(
 }
 
 
+fn compute_com(){
+    println!("List the communication during the keygen phrase");
+    println!("The size of party one first message is {}", mem::size_of::<party_one::KeyGenFirstMsg>());
+    println!("The size of party two first message is {}", mem::size_of::<party_two::KeyGenFirstMsg>());
+    println!("The size of party one second message is {}", mem::size_of::<party_one::KeyGenSecondMsg>());
+    println!("The size of party two second message is {}", mem::size_of::<party_two::KeyGenSecondMsg>());
+    println!("The size of party one HSCM setup is {}", mem::size_of::<party_one::Party2Setup>());
+    println!("List the comminication during the signature phrase");
+    println!("The size of party two first message is {}", mem::size_of::<party_two::EphKeyGenFirstMsg>());
+    println!("The size of party one first message is {}", mem::size_of::<party_one::EphKeyGenFirstMsg>());
+    println!("The size of party two second message is {}", mem::size_of::<party_two::EphKeyGenSecondMsg>());
+    println!("The size of party one second message is {}", mem::size_of::<party_one::EphKeyGenSecondMsg>());
+    println!("The size of party one HSMCLPublic is {}", mem::size_of::<party_one::HSMCLPublic>());
+    println!("The size of party two c3 is {}", mem::size_of::<party_two::PartialSig>());
+    println!("The size of signature is {}", mem::size_of::<Signature>());
+}
 fn main() {
     let seed: BigInt = BigInt::from_str_radix(
         "314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848",
@@ -153,5 +168,5 @@ fn main() {
     println!("signature ends!");
     println!("The overall time of sign is {:.8}", sw);
     println!("Final signature of {} is {:#?}",&message, &signture);
-    println!("The size of signature is {}", mem::size_of::<Signature>());
+    compute_com();
 }
