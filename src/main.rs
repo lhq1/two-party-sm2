@@ -2,6 +2,7 @@ use curv::elliptic::curves::Secp256k1;
 use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
 use stopwatch::Stopwatch;
+use std::mem;
 //use std::io::stdin;
 
 mod HPS;
@@ -152,5 +153,5 @@ fn main() {
     println!("signature ends!");
     println!("The overall time of sign is {:.8}", sw);
     println!("Final signature of {} is {:#?}",&message, &signture);
-    
+    println!("The size of signature is {}", mem::size_of::<Signature>());
 }
