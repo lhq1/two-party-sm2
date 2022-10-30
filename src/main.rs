@@ -3,6 +3,9 @@ use curv::{arithmetic::Converter, elliptic::curves::Point};
 use curv::BigInt;
 use stopwatch::Stopwatch;
 use std::mem;
+use class_group::primitives::cl_dl_public_setup::{
+   CLDLProof, CLGroup, Ciphertext as CLCiphertext, PK, SK,
+};
 //use std::io::stdin;
 
 mod HPS;
@@ -144,6 +147,10 @@ fn compute_com(){
     println!("The size of party one HSMCLPublic is {}", mem::size_of::<party_one::HSMCLPublic>());
     println!("The size of party two c3 is {}", mem::size_of::<party_two::PartialSig>());
     println!("The size of signature is {}", mem::size_of::<Signature>());
+    println!("List the size of HE:");
+    println!("The size of public key is {}", mem::size_of::<PK>());
+    println!("The size of secret key is {}", mem::size_of:<SK>());
+    println!("The ciphertext size is {}",mem::size_of::<CLCiphertext>());
 }
 fn main() {
     let seed: BigInt = BigInt::from_str_radix(
