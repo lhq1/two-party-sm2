@@ -22,9 +22,9 @@ Rust统一使用cargo从crate.io下载所需要的依赖库，该项目主要依
 
 ## 说明
 在下面两图中，结合整个两方SM2方案，我简要说明了各个函数起到的功能：
-![密钥生成步骤](fig/two-party-key-gen.png)
+![密钥生成步骤](fig/two-party-sm2-keygen.png)
 
-![签名不重要](fig/two-party-sign.png)
+![签名步骤](fig/two-party-sm2-sign.png)
 ## 参考
 [1]<https://eprint.iacr.org/2019/503.pdf>
 
